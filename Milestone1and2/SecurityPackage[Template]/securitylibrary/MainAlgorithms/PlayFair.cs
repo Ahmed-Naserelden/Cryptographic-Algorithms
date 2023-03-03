@@ -108,8 +108,16 @@ namespace SecurityLibrary
             {
                 char a = plainText[i];
                 char b = 'x';
-                if (i + 1 < plainText.Length && plainText[i + 1] != a)
-                {
+                if (
+                i + 1 < plainText.Length && 
+                plainText[i + 1] != a && 
+                
+                // to void "ij" & "ji" 
+                // to divide ("ix", "jx"), ("jx", "ix")
+                
+                !((a=='i'||a=='j')&&(plainText[i+1]=='i'||plainText[i + 1]=='j'))
+                
+                ){
                     b = plainText[i + 1];
                     i++;
                 }
