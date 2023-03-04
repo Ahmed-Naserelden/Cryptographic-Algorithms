@@ -8,123 +8,309 @@ namespace SecurityLibrary
 {
     public class PlayFair : ICryptographic_Technique<string, string>
     {
-        struct pair{
-            public int x;
-            public int y;
-        }
-        static char[,] matrix;
-        static pair[] position;
-        public static char[,] createMatrix(string key)
+        public static int x1 = -1, y1 = -1, x2 = -1, y2 = -1;
+
+        static int[] position(char[,] matrix, char c)
         {
-            char[,] matrix = new char[5, 5];
-            bool[] visited = new bool[26];
-            int index = 0, itr = 0;
+            int[] result = {-1,-1};
+            if(c == 'j')
+                c = 'i';
+            for(int i=0 ; i < 5 ; i++)
+            {
+                for(int j=0 ; j < 5 ; j++)
+                {
+                    if(matrix[i,j] == c)
+                    {
+                        result[0] = i;
+                        result[1] = j;
+                        return result;
+                    }
+                }
+            }
+            return result;
+        }
+        //our swap function
+        static void swap(ref int x,ref int y)
+        {
+            int temp = y;
+            y = x;
+            x = temp;
+        }
+        //get position of the first letter in the Matrix
+        static void position1(char [,] arr,char c)
+        {
+            if (c == 'j')
+                c = 'i';
             for (int i = 0; i < 5; i++)
             {
                 for (int j = 0; j < 5; j++)
                 {
-                    while (index < key.Length && visited[key[index] - 'a']) index++;
-                    if (index < key.Length)
+                    if (c == arr[i, j])
                     {
-                        matrix[i, j] = key[index];
-                        if (key[index] == 'i' || key[index] == 'j')
-                        {
-                            visited['i' - 'a'] = true;
-                            visited['j' - 'a'] = true;
-                        }
-                        visited[key[index] - 'a'] = true;
-                        position[key[index] - 'a'].x = i;
-                        position[key[index] - 'a'].y = j;
-                        index++;
-                        continue;
-                    }
-                    while (itr < 26 && visited[itr]) itr++;
-                    if (itr < 26)
-                    {
-                        matrix[i, j] = (char)('a' + itr);
-                        if (itr == 'i' - 'a')
-                        {
-                            visited['i' - 'a'] = true;
-                            visited['j' - 'a'] = true;
-                        }
-                        position[itr].x = i;
-                        position[itr].y = j;
-                        visited[itr] = true;
+                        x1 = i;
+                        y1 = j;
                     }
                 }
             }
-            return matrix;
         }
-        public static string reverseSemgment(char a, char b, int d = 1)
+        //get position of the second letter in the Matrix
+        static void position2(char[,] arr, char c)
         {
-            pair aCorditnate = position[a - 'a'];
-            pair bCorditnate = position[b - 'a'];
-            char f, s;
-
-            if (aCorditnate.x == bCorditnate.x)
+            if (c == 'j')
+                c = 'i';
+            for (int i = 0; i < 5; i++)
             {
-                f = matrix[aCorditnate.x, ((aCorditnate.y + d) % 5 + 5) % 5];
-                s = matrix[bCorditnate.x, ((bCorditnate.y + d) % 5 + 5) % 5];
+                for (int j = 0; j < 5; j++)
+                {
+                    if (c == arr[i, j])
+                    {
+                        x2 = i;
+                        y2 = j;
+                    }
+                }
             }
-
-            else if (aCorditnate.y == bCorditnate.y)
-            {
-                f = matrix[(aCorditnate.x + d + 5) % 5, aCorditnate.y];
-                s = matrix[(bCorditnate.x + d + 5) % 5, bCorditnate.y];
-            }
-
-            else
-            { 
-                f = matrix[aCorditnate.x, bCorditnate.y];
-                s = matrix[bCorditnate.x, aCorditnate.y];   
-            }
-            return ""+f+s;
         }
-        public string Decrypt(string cipherText, string key)
+        //search the element while filling the Matrix
+         static bool isFound(char [,] arr,char c, int size)
         {
-            string plainText = "";
-            cipherText = cipherText.ToLower();
-            position = new pair[26];
-            matrix = createMatrix(key);
-            for (int i = 0; i < cipherText.Length - 1; i += 2)
+            for (int i = 0; i < 5; i++)
             {
-                char a = cipherText[i];
-                char b = cipherText[i + 1];
-                string res = reverseSemgment(a, b, -1);
-                if (plainText != "" && plainText[plainText.Length - 1] == 'x' && res[0] == plainText[plainText.Length - 2])
-                    plainText = plainText.Remove(plainText.Length - 1);
-                plainText += res;
+                for (int j = 0; j < 5; j++)
+                {
+                    if (arr[i, j] == c)
+                        return true;
+                    if (size == 0)
+                        break;
+                    size--;
+                }
+                if (size == 0)
+                    break;
             }
-            if (plainText[plainText.Length - 1] == 'x') plainText = plainText.Remove(plainText.Length - 1);
-            return plainText;
+            return false;
         }
+
+        //Encryption function (PlayFair)
         public string Encrypt(string plainText, string key)
         {
-            string cipherText = "";
-            position = new pair[26];
-            matrix = createMatrix(key);
+            //throw new NotImplementedException();
 
-            for (int i = 0; i < plainText.Length; i++)
-            {
-                char a = plainText[i];
-                char b = 'x';
-                if (
-                i + 1 < plainText.Length && 
-                plainText[i + 1] != a && 
-                
-                // to void "ij" & "ji" 
-                // to divide ("ix", "jx"), ("jx", "ix")
-                
-                !((a=='i'||a=='j')&&(plainText[i+1]=='i'||plainText[i + 1]=='j'))
-                
-                ){
-                    b = plainText[i + 1];
-                    i++;
+            //handle the plaintext with 'x' letter in particular cases
+            plainText = plainText.ToLower();
+            for (int i = 0; i < plainText.Length - 2; i++)
+            { 
+                if (plainText[i] == plainText[i + 1] && i % 2 == 0)
+                {
+                    plainText = plainText.Insert(i+1, "x");
                 }
-                cipherText += reverseSemgment(a, b);
             }
+
+            //put 'x' letter @ the end of list to complete pairs
+            if (plainText.Length % 2 != 0)
+                plainText = plainText + "x";
+            
+            //putting key characters in a list to handel letter dublicates
+            key.ToLower();
+            LinkedList<char> keyList = new LinkedList<char>();
+            for (int i = 0; i < key.Length; i++)
+            {
+                if (!keyList.Contains(key[i]))
+                {
+                    keyList.AddLast(key[i]);
+                }
+            }
+
+            //create 5x5 Matrix
+            char[,] array = new char[5, 5];
+            //initializing the array with '*'
+            for (int i = 0; i < 5; i++)
+            {
+                for (int j = 0; j < 5; j++)
+                {
+                    array[i, j] = '*';
+                }
+            }
+            //filling the Matrix with key characters
+            int it = 0;
+            for (int i = 0; i < 5; i++)
+            {
+                for (int j = 0; j < 5; j++)
+                {
+                    if (it < keyList.Count)
+                    {
+                        char val = keyList.ElementAt<char>(it);
+                        array[i, j] = val;
+                        it++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+            }
+            //fill the rest of matrix with alphabetic letters
+            char Fill = 'a';
+            int size = 1;
+            for (int i = 0; i < 5; i++)
+            {
+                for (int j = 0; j < 5; j++)
+                {
+                    if (size > keyList.Count)
+                    {
+                        if (Fill == 'j')
+                            Fill++;
+                        if (!isFound(array, Fill, keyList.Count))
+                            array[i, j] = Fill;
+                        else
+                            j--;
+                        Fill++;
+                    }
+                    size++;
+                }
+            }
+            //generate the cipher text
+            char a, b;
+            int itt = 0; //iterator
+            LinkedList<char> cipherList = new LinkedList<char>();
+            while (itt < plainText.Length -1)
+            { 
+                x1 = -1; y1 = -1; x2 = -1; y2 = -1;
+                
+                a = plainText[itt];
+                b = plainText[itt + 1];
+                position1(array, a);
+                position2(array, b);
+
+                if(y1 == y2)
+                {
+                    x1 = (x1 + 1) % 5;
+                    x2 = (x2 + 1) % 5;
+                    cipherList.AddLast(array[x1, y1]);
+                    cipherList.AddLast(array[x2, y2]);
+                }
+                else if(x1 == x2)
+                { 
+                    y1 = (y1 + 1) % 5;
+                    y2 = (y2 + 1) % 5;
+                    cipherList.AddLast(array[x1, y1]);
+                    cipherList.AddLast(array[x2, y2]);
+                }
+                else
+                {
+                    swap(ref y1, ref y2);
+                    cipherList.AddLast(array[x1, y1]);
+                    cipherList.AddLast(array[x2, y2]);
+                }
+                itt+=2;
+            }
+            string cipherText = new string(cipherList.ToArray());
             return cipherText;
         }
-    
+
+        public string Decrypt(string cipherText, string key)
+        {
+            //throw new NotImplementedException();
+
+            ////////////////....HANDLING KEY.....////////////////
+            key = key.ToLower();
+            //remove duplicates
+            List<char> keyList = new List<char>();
+            for(int i=0 ; i < key.Length ; i++)
+            {
+                if(!keyList.Contains(key[i]))
+                    keyList.Add(key[i]);
+            }
+            //create matrix 5x5
+            char[,] matrix = new char[5,5];
+            int keyListIterator = 0;
+            for (int i = 0; i < 5; i++)
+			{
+                for (int j = 0; j < 5; j++)
+			    {
+                    if(keyListIterator == keyList.Count)
+                        break;
+                    else
+                        matrix[i,j] = keyList[keyListIterator];
+                    keyListIterator++;
+			    }
+                if(keyListIterator == keyList.Count)
+                        break;
+			}
+            //fill matrix
+            char fill = 'a';
+            for (int i = 0; i < 5; i++)
+			{
+                for (int j = 0; j < 5; j++)
+			    {
+                    if(keyListIterator < 1)
+                    {
+                        if(fill == 'j')
+                            fill++;
+                        if(keyList.Contains(fill))
+                            j--;
+                        else
+                            matrix[i,j] = fill;
+                        fill++;
+                    }
+                    else
+                        keyListIterator--;
+			    }
+			}
+            /////////////////......HANDLING CIPHER_TEXT......///////////
+            cipherText = cipherText.ToLower();
+            char a,b;
+            string plainText = "";
+            for(int i = 0 ; i < cipherText.Length ; i+=2)
+            {
+                a = cipherText[i];
+                b = cipherText[i+1];
+                int [] positionX = position(matrix,a);
+                int x1 = positionX[0];
+                int y1 = positionX[1];
+                int [] positionY = position(matrix,b);
+                int x2 = positionY[0];
+                int y2 = positionY[1];
+
+                if(y1 == y2)
+                {
+                    x1 = ((x1 - 1)+5) % 5;
+                    x2 = ((x2 - 1)+5) % 5;
+                    plainText = plainText + matrix[x1,y1];
+                    plainText = plainText + matrix[x2,y2];
+                }
+                else if(x1 == x2)
+                {
+                    y1 = ((y1 - 1)+5) % 5;
+                    y2 = ((y2 - 1)+5) % 5;
+                    plainText = plainText + matrix[x1,y1];
+                    plainText = plainText + matrix[x2,y2];
+                }
+                else
+                {
+                    swap(ref y1, ref y2);
+                    plainText = plainText + matrix[x1,y1];
+                    plainText = plainText + matrix[x2,y2];
+                }
+            }
+            string finalPlain = "";
+            finalPlain += plainText[0];
+            for (int i = 1; i < plainText.Length - 1; i++)
+            {
+                if (plainText[i] == 'x' && i % 2 != 0)
+                {
+                    if (plainText[i - 1] != plainText[i + 1])
+                        finalPlain += plainText[i];
+                }
+                else
+                    finalPlain += plainText[i];
+            }
+            if (plainText[plainText.Length - 1] != 'x')
+                finalPlain += plainText[plainText.Length - 1];
+            return finalPlain;
+
+
+
+        }
+
     }
 }
