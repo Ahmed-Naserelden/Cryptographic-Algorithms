@@ -10,7 +10,7 @@ namespace SecurityLibrary
     {
         public string Analyse(string plainText, string cipherText)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(plainText);
         }
 
         public string Decrypt(string cipherText, string key)
