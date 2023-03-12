@@ -47,6 +47,7 @@ namespace SecurityLibrary
             }*/
             return key;
         }
+        
         public string Decrypt(string cipherText, string key)
         {
             string plainText = "";
@@ -57,6 +58,7 @@ namespace SecurityLibrary
             }
             return plainText;
         }
+        
         public string Encrypt(string plainText, string key)
         {
             string cipherText = "";
@@ -101,6 +103,7 @@ namespace SecurityLibrary
         /// </summary>
         /// <param name="cipher"></param>
         /// <returns>Plain text</returns> 
+
         public string AnalyseUsingCharFrequency(string cipher)
         {
             string plainText = "";
@@ -108,6 +111,7 @@ namespace SecurityLibrary
             string order = "ZQJXKVBYWGPFMUCDLHRSNIOATE".ToLower();       
 
             pair[] frequency = new pair[26];
+
             char[] map = new char[26];
 
             for (int i = 0; i < 26; i++) frequency[i].y = i;
@@ -115,7 +119,9 @@ namespace SecurityLibrary
             foreach (char ch in cipher){
                 frequency[ch - 'A'].x ++;
             }
+
             Array.Sort(frequency, (X, Y) => X.x.CompareTo(Y.x));
+
             for (int i = 0; i < 26; i++){
                 map[frequency[i].y] = order[i];
             }
@@ -123,6 +129,7 @@ namespace SecurityLibrary
             foreach (char ch in cipher){
                 plainText += map[ch - 'A'];
             }
+            
             return plainText;
         }
     }
