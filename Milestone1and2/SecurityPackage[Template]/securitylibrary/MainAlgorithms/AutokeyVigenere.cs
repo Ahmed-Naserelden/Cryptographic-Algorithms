@@ -22,7 +22,7 @@ namespace SecurityLibrary
             }
 
             int cipher_counter = 0;
-            cipherText = cipherText;
+           // cipherText = cipherText;
             plainText = plainText.ToLower();
             for (int i = 0; i < plainText.Length; i++)
             {
