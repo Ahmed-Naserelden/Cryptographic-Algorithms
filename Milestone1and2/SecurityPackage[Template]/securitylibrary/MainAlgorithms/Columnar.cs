@@ -210,7 +210,7 @@ namespace SecurityLibrary
 
             List<int> key = new List<int>();
 
-            for (int i = 2; i < cipherText.Length - 1; i++)
+            for (int i = 1; i < cipherText.Length; i++)
             {
 
 
