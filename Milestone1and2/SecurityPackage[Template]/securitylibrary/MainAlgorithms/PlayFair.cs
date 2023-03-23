@@ -30,6 +30,7 @@ namespace SecurityLibrary
             return result;
         }
         //our swap function
+        
         static void swap(ref int x,ref int y)
         {
             int temp = y;
@@ -37,6 +38,7 @@ namespace SecurityLibrary
             x = temp;
         }
         //get position of the first letter in the Matrix
+        
         static void position1(char [,] arr,char c)
         {
             if (c == 'j')
@@ -54,6 +56,7 @@ namespace SecurityLibrary
             }
         }
         //get position of the second letter in the Matrix
+        
         static void position2(char[,] arr, char c)
         {
             if (c == 'j')
@@ -71,7 +74,8 @@ namespace SecurityLibrary
             }
         }
         //search the element while filling the Matrix
-         static bool isFound(char [,] arr,char c, int size)
+        
+        static bool isFound(char [,] arr,char c, int size)
         {
             for (int i = 0; i < 5; i++)
             {
@@ -307,9 +311,6 @@ namespace SecurityLibrary
             if (plainText[plainText.Length - 1] != 'x')
                 finalPlain += plainText[plainText.Length - 1];
             return finalPlain;
-
-
-
         }
 
     }

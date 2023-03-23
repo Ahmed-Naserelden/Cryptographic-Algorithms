@@ -28,6 +28,7 @@ namespace SecurityLibrary
             return cipherText;
 
         }
+        
         public string Decrypt(string cipherText, int key)
         {
             string plainText = "";
@@ -47,6 +48,7 @@ namespace SecurityLibrary
 
             return plainText;
         }
+        
         public int Analyse(string plainText, string cipherText)
         {
             int key = 0;
