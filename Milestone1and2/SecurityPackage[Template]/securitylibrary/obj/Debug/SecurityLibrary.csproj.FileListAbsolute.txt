@@ -22,9 +22,3 @@ D:\GithubDoc\Cryptography-Data_Security\Milestone1and2\SecurityPackage[Template]
 D:\GithubDoc\Cryptography-Data_Security\Milestone1and2\SecurityPackage[Template]\securitylibrary\obj\Debug\SecurityLibrary.csproj.CoreCompileInputs.cache
 D:\GithubDoc\Cryptography-Data_Security\Milestone1and2\SecurityPackage[Template]\securitylibrary\obj\Debug\SecurityLibrary.dll
 D:\GithubDoc\Cryptography-Data_Security\Milestone1and2\SecurityPackage[Template]\securitylibrary\obj\Debug\SecurityLibrary.pdb
-C:\Users\biruni\Documents\Cryptography-Network_Security\Milestone1and2\SecurityPackage[Template]\SecurityLibrary\bin\Debug\SecurityLibrary.dll
-C:\Users\biruni\Documents\Cryptography-Network_Security\Milestone1and2\SecurityPackage[Template]\SecurityLibrary\bin\Debug\SecurityLibrary.pdb
-C:\Users\biruni\Documents\Cryptography-Network_Security\Milestone1and2\SecurityPackage[Template]\SecurityLibrary\obj\Debug\SecurityLibrary.csproj.AssemblyReference.cache
-C:\Users\biruni\Documents\Cryptography-Network_Security\Milestone1and2\SecurityPackage[Template]\SecurityLibrary\obj\Debug\SecurityLibrary.csproj.CoreCompileInputs.cache
-C:\Users\biruni\Documents\Cryptography-Network_Security\Milestone1and2\SecurityPackage[Template]\SecurityLibrary\obj\Debug\SecurityLibrary.dll
-C:\Users\biruni\Documents\Cryptography-Network_Security\Milestone1and2\SecurityPackage[Template]\SecurityLibrary\obj\Debug\SecurityLibrary.pdb
