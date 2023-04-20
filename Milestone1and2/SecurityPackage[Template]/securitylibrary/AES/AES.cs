@@ -32,7 +32,6 @@ namespace SecurityLibrary.AES
             { "E1",  "F8",  "98", "11", "69",  "d9",  "8e",  "94",  "9b",  "1e",  "87",  "e9",  "ce",  "55",  "28",  "df" },
             { "8C",  "A1",  "89", "0D", "BF",  "e6",  "42",  "68",  "41",  "99",  "2d",  "0f",  "b0",  "54",  "bb",  "16" },
         };
-        
         string[,] Rcon = {
             {"01","00","00","00"}, // 0
             {"02","00","00","00"}, // 1
@@ -46,25 +45,20 @@ namespace SecurityLibrary.AES
             {"36","00","00","00"}, // 9
         
         };
-        
         string[,] C = {
             {"02","03","01","01"},
             {"01","02","03","01"},
             {"01","01","02","03"},
             {"03","01","01","02"}
         };
-
-        int toDecimal(string number, int bas)
-        {
-            return Convert.ToInt32(number, bas);
-        }
+            
+        string[,,] keys = new string[10,4,4];
 
         string toHexa(string number)
         {
             string hx = Convert.ToInt32(number, 2).ToString("X");
             return (hx.Length < 2 ? "0" : "") + hx;
         }
-        
         string toBinary(string number)
         {
             return String.Join(
@@ -76,21 +70,18 @@ namespace SecurityLibrary.AES
                             16), 
                         2).PadLeft(4, '0')));
         }
-        
-        void VectorXorVector(string[] v1, string[] v2)
+        int toDecimal(string number, int bas)
         {
-            for (int i = 0; i < 4; i++)
-                v1[i] = xor(v1[i], v2[i]);
+            return Convert.ToInt32(number, bas);
         }
-        
+           
         string[] getRowAt(string[,] M, int index)
         {
             string[] row = new string[4];
             for (int i = 0; i < 4; i++)
                 row[i] = M[index, i];
             return row;
-        }
-        
+        }   
         string[] getColAt(string[,] M, int index)
         {
             string[] col = new string[4];
@@ -98,15 +89,7 @@ namespace SecurityLibrary.AES
                 col[i] = M[i, index];
             return col;
         }
-        
-        void fillMatrix(string content, string[,] matrix)
-        {
-            int k = 0;
-            for (int i = 0; i < 4; i++)
-                for (int j = 0; j < 4; j++)
-                    matrix[j, i] = "" + content[k++] + content[k++];
-        }
-        
+           
         string xor(string a, string b)
         {
             string ans = "";
@@ -117,14 +100,45 @@ namespace SecurityLibrary.AES
             
             return toHexa(ans);
         }
-        
-        void matrixXORmatrix(string[,] M1, string[,] M2, string[,] res)
+        void xor(string[] v1, string[] v2)
+        {
+            for (int i = 0; i < 4; i++)
+                v1[i] = xor(v1[i], v2[i]);
+        }
+        void xor(string[,] M1, string[,] M2, string[,] res)
         {
             for (int i = 0; i < 4; i++)
                 for (int j = 0; j < 4; j++)
                     res[i, j] = xor(M1[i, j], M2[i, j]);
         }
         
+        void fillMatrix(string content, string[,] matrix)
+        {
+            int k = 0;
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    matrix[j, i] = "" + content[k++] + content[k++];
+        }
+        
+        void copyMatrixTo(string[,] M1, string[,] M2)
+        {
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    M2[i, j] = M1[i, j];
+        }
+        void copyMatrixTo(string[,] M1, string[,,] M2, int round)
+        {
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    M2[round, i, j] = M1[i, j];
+        }
+        void copyMatrixTo(string[,,] M1, string[,] M2, int round)
+        {
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    M2[i, j] = M1[round, i, j];
+        }
+
         void subBytes(string[,] M)
         {
             for (int i = 0; i < 4; i++)
@@ -140,7 +154,6 @@ namespace SecurityLibrary.AES
                 }
             }
         }
-        
         void ShiftRows(string[,] M)
         {
             string[] row = new string[4];
@@ -156,7 +169,6 @@ namespace SecurityLibrary.AES
                     M[i, j] = row[j];
             }
         }
-        
         void mixColumns(string[,] M)
         {
             string[,] R = new string[4, 4]{
@@ -217,14 +229,8 @@ namespace SecurityLibrary.AES
                 }
             }
 
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                    M[i, j] = R[i, j];
-            }
-
+            copyMatrixTo(R, M);
         }
-        
         void generateNewKey(string[,] oldkey, int round)
         {
             string[,] newKey = new string[4, 4];
@@ -251,35 +257,58 @@ namespace SecurityLibrary.AES
                         lastcolumn[i] = Sbox[r, c];
                     }
 
-                    VectorXorVector(column, lastcolumn);
-                    VectorXorVector(column, rcon);
+                    xor(column, lastcolumn);
+                    xor(column, rcon);
 
                 }
                 else if (col == 1)
                 {
                     string[] w0 = getColAt(newKey, col - 1);
-                    VectorXorVector(column, w0);
+                    xor(column, w0);
                 }
                 else if (col == 2)
                 {
                     string[] w1 = getColAt(newKey, col - 1);
-                    VectorXorVector(column, w1);
+                    xor(column, w1);
                 }
                 else
                 {
                     string[] w2 = getColAt(newKey, col - 1);
-                    VectorXorVector(column, w2);
+                    xor(column, w2);
                 }
 
                 for (int i = 0; i < 4; i++)
                     newKey[i, col] = column[i];
             }
 
-            for (int i = 0; i < 4; i++)
-                for (int j = 0; j < 4; j++)
-                    oldkey[i, j] = newKey[i, j];
+            copyMatrixTo(newKey, oldkey);
         }
+        
+        void GenerateAllKeys(string[,] KEY)
+        {
+            string[,] temp = new string[4, 4];
+            copyMatrixTo(KEY, temp);
+            for(int round = 0; round < 10; round++)
+            {
+                generateNewKey(temp, round);
+                copyMatrixTo(temp, keys, round);
+            }
+        }
+        string getLocationInSboxMap(string content)
+        {
+            string val = "";
+            for (int i = 0; i < 16; i++)
+                for (int j = 0; j < 16; j++)
+                    if (content == Sbox[i, j]){
+                        if (i < 10) val += i.ToString();
+                        else if (i > 10) val += (string)("A" + i % 10);
 
+                        if (j < 10) val += j.ToString();
+                        else if (j > 10) val += (string)("A" + j % 10);
+                    }
+            return val;
+        }
+        
         public override string Encrypt(string plainText, string key)
         {
             // throw new NotImplementedException();
@@ -290,42 +319,55 @@ namespace SecurityLibrary.AES
             string[,] 
                 PLAINTEXT = new string[4, 4],
                 KEY = new string[4, 4], 
-                xor_res = new string[4, 4];
+                currentCipher = new string[4, 4],
+                helperTemp = new string[4, 4]; ;
 
             fillMatrix(plainText, PLAINTEXT);
             fillMatrix(key, KEY);
 
-            matrixXORmatrix(KEY, PLAINTEXT, xor_res);
+            xor(KEY, PLAINTEXT, currentCipher);
 
             for (int round = 0; round < 10; round++)
             {
-                subBytes(xor_res);
-                ShiftRows(xor_res);
+                subBytes(currentCipher);
+                ShiftRows(currentCipher);
                 if (round != 9)
-                    mixColumns(xor_res);
+                    mixColumns(currentCipher);
 
                 generateNewKey(KEY, round);
 
-                string[,] help = new string[4, 4];
+                xor(KEY, currentCipher, helperTemp);
 
-                matrixXORmatrix(KEY, xor_res, help);
-
-                for (int i = 0; i < 4; i++)
-                    for (int j = 0; j < 4; j++)
-                        xor_res[i, j] = help[i, j];
-                
+                copyMatrixTo(helperTemp, currentCipher);
             }
 
             for (int i = 0; i < 4; i++)
                 for (int j = 0; j < 4; j++)
-                    cipherText += xor_res[j, i];
+                    cipherText += currentCipher[j, i];
 
             return "0x" + cipherText;
         }
         
         public override string Decrypt(string cipherText, string key)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
+            string plainText = "";
+            cipherText = cipherText.Substring(2);
+            key = key.Substring(2);
+            string[,]
+                CIPHERTEXT = new string[4, 4],
+                KEY = new string[4, 4],
+                currentplain = new string[4, 4];
+
+            fillMatrix(plainText, CIPHERTEXT);
+            fillMatrix(key, KEY);
+
+            GenerateAllKeys(KEY);
+            xor(KEY, CIPHERTEXT, currentplain);
+
+
+
+            return "0x" + plainText;
         }
     }
 }
