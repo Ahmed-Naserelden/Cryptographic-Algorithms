@@ -49,6 +49,7 @@ namespace SecurityLibrary.AES
             {"60","51","7f","a9","19","b5","4a","0d","2d","e5","7a","9f","93","c9","9c","ef"},
             {"a0","e0","3b","4d","ae","2a","f5","b0","c8","eb","bb","3c","83","53","99","61"},
             {"17","2b","04","7e","ba","77","d6","26","e1","69","14","63","55","21","0c","7d"}};
+
         static string[,] Rcon = {
             {"01","00","00","00"}, // 0
             {"02","00","00","00"}, // 1
@@ -62,6 +63,7 @@ namespace SecurityLibrary.AES
             {"36","00","00","00"}, // 9
         
         };
+
         static string[,] C = {
             {"02","03","01","01"},
             {"01","02","03","01"},
@@ -74,8 +76,6 @@ namespace SecurityLibrary.AES
             {"0D","09", "0E", "0B"},
             {"0B","0D", "09", "0E"}
             };
-
-        static string[,,] keys = new string[10,4,4];
 
         static string toHexa(string number)
         {
@@ -156,18 +156,6 @@ namespace SecurityLibrary.AES
                 for (int j = 0; j < 4; j++)
                     M2[i, j] = M1[i, j];
         }
-        static void copyMatrixTo(string[,] M1, string[,,] M2, int round)
-        {
-            for (int i = 0; i < 4; i++)
-                for (int j = 0; j < 4; j++)
-                    M2[round, i, j] = M1[i, j];
-        }
-        static void copyMatrixTo(string[,,] M1, string[,] M2, int round)
-        {
-            for (int i = 0; i < 4; i++)
-                for (int j = 0; j < 4; j++)
-                    M2[i, j] = M1[round, i, j];
-        }
 
         static void subBytes(string[,] M)
         {
@@ -215,6 +203,7 @@ namespace SecurityLibrary.AES
                     M[i, j] = row[j];
             }
         }
+        
         static void IShiftRows(string[,] matrix)
         {
             for (int i = 0; i < 4; i++)
@@ -371,31 +360,6 @@ namespace SecurityLibrary.AES
 
             copyMatrixTo(newKey, oldkey);
         }
-        
-        static void GenerateAllKeys(string[,] KEY)
-        {
-            string[,] temp = new string[4, 4];
-            copyMatrixTo(KEY, temp);
-            for(int round = 0; round < 10; round++)
-            {
-                generateNewKey(temp, round);
-                copyMatrixTo(temp, keys, round);
-            }
-        }
-        static string getLocationInSboxMap(string content)
-        {
-            string val = "";
-            for (int i = 0; i < 16; i++)
-                for (int j = 0; j < 16; j++)
-                    if (content == Sbox[i, j]){
-                        if (i < 10) val += i.ToString();
-                        else if (i > 10) val += (string)("A" + i % 10);
-
-                        if (j < 10) val += j.ToString();
-                        else if (j > 10) val += (string)("A" + j % 10);
-                    }
-            return val;
-        }
 
         public static byte GMul(Byte a, Byte b)
         {
@@ -442,6 +406,7 @@ namespace SecurityLibrary.AES
             {
                 subBytes(currentCipher);
                 ShiftRows(currentCipher);
+                
                 if (round != 9)
                     mixColumns(currentCipher);
 
