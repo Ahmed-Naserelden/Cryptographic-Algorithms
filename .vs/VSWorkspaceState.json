@@ -1,12 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\Milestone1and2",
-    "\\Milestone1and2\\SecurityPackage[Template]",
-    "\\Milestone1and2\\SecurityPackage[Template]\\securitylibrary",
-    "\\Milestone1and2\\SecurityPackage[Template]\\securitylibrary\\MainAlgorithms",
-    "\\Milestone1and2\\SecurityPackage[Template]\\securitypackagetest"
+    ""
   ],
-  "SelectedNode": "\\Milestone1and2\\SecurityPackage[Template]\\SecurityPackage.sln",
+  "SelectedNode": "\\SecurityPackage.sln",
   "PreviewInSolutionExplorer": false
 }
