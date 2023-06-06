@@ -1,4 +1,4 @@
-# Cryptography Algorithms 💾
+# Cryptographic Algorithms 💾
 
 ***Data Security Algorithms:***
 ###  👉 This repo has most common crypto algorithms using c#.
